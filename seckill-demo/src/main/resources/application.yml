@@ -1,0 +1,27 @@
+
+spring:
+  thymeleaf:
+    cache: false #  关闭thymeleaf模版缓存
+  datasource:
+    url: jdbc:mysql://localhost:3306/seckill?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root123456
+    hikari: # springboot自带的数据库链接池,号称最快的链接池
+      pool-name: DateHikariCP # 链接池名字
+      minimum-idle: 5 # 最小空闲链接数
+      idle-timeout: 180000 # 空闲链接存活最大时间，默认600000（10 分钟）
+      maximum-pool-size: 10 # 最大链接数 默认 10
+      auto-commit: true # 自动提交 （从连接池返回的链接自动提交）
+      max-lifetime: 180000 # 链接最大存活时间，0表示永久，默认1800000（30分钟）
+      connection-timeout: 30000 # 链接超时时间 默认30秒
+      connection-test-query: SELECT 1 # 心跳机制（测试连接是否可用的查询语句）
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*Mapper.xml # 配置Mapper.xml映射文件
+  type-aliases-package: com.yang.seckill.pojo # 配置mybatisPlus数据返回的类型别名，（默认，别名就是类名）
+
+# 日志配置
+logging:
+  level:
+    com.yang.seckill.mapper: debug
+server:
+  port: 8091
