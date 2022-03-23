@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yang.seckilldemo.mapper.UserMapper">
+
+    <resultMap type="com.yang.seckilldemo.pojo.User" id="UserMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="pasword" column="pasword" jdbcType="VARCHAR"/>
+        <result property="slat" column="slat" jdbcType="VARCHAR"/>
+        <result property="head" column="head" jdbcType="VARCHAR"/>
+        <result property="registerDate" column="register_date" jdbcType="TIMESTAMP"/>
+        <result property="lastLoginDate" column="last_login_date" jdbcType="TIMESTAMP"/>
+        <result property="loginCount" column="login_count" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserMap">
+        select id,
+               nickname,
+               pasword,
+               slat,
+               head,
+               register_date,
+               last_login_date,
+               login_count
+        from t_user
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="UserMap">
+        select
+        id, nickname, pasword, slat, head, register_date, last_login_date, login_count
+        from t_user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                and nickname = #{nickname}
+            </if>
+            <if test="pasword != null and pasword != ''">
+                and pasword = #{pasword}
+            </if>
+            <if test="slat != null and slat != ''">
+                and slat = #{slat}
+            </if>
+            <if test="head != null and head != ''">
+                and head = #{head}
+            </if>
+            <if test="registerDate != null">
+                and register_date = #{registerDate}
+            </if>
+            <if test="lastLoginDate != null">
+                and last_login_date = #{lastLoginDate}
+            </if>
+            <if test="loginCount != null">
+                and login_count = #{loginCount}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from t_user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                and nickname = #{nickname}
+            </if>
+            <if test="pasword != null and pasword != ''">
+                and pasword = #{pasword}
+            </if>
+            <if test="slat != null and slat != ''">
+                and slat = #{slat}
+            </if>
+            <if test="head != null and head != ''">
+                and head = #{head}
+            </if>
+            <if test="registerDate != null">
+                and register_date = #{registerDate}
+            </if>
+            <if test="lastLoginDate != null">
+                and last_login_date = #{lastLoginDate}
+            </if>
+            <if test="loginCount != null">
+                and login_count = #{loginCount}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into t_user(id,nickname, pasword, slat, head, register_date, last_login_date, login_count)
+        values (#{id},#{nickname}, #{pasword}, #{slat}, #{head}, #{registerDate}, #{lastLoginDate}, #{loginCount})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into t_user(nickname, pasword, slat, head, register_date, last_login_date, login_count)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.nickname}, #{entity.pasword}, #{entity.slat}, #{entity.head}, #{entity.registerDate},
+            #{entity.lastLoginDate}, #{entity.loginCount})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into t_user(nickname, pasword, slat, head, register_date, last_login_date, login_count)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.nickname}, #{entity.pasword}, #{entity.slat}, #{entity.head}, #{entity.registerDate},
+            #{entity.lastLoginDate}, #{entity.loginCount})
+        </foreach>
+        on duplicate key update
+        nickname = values(nickname),
+        pasword = values(pasword),
+        slat = values(slat),
+        head = values(head),
+        register_date = values(register_date),
+        last_login_date = values(last_login_date),
+        login_count = values(login_count)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update t_user
+        <set>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname},
+            </if>
+            <if test="pasword != null and pasword != ''">
+                pasword = #{pasword},
+            </if>
+            <if test="slat != null and slat != ''">
+                slat = #{slat},
+            </if>
+            <if test="head != null and head != ''">
+                head = #{head},
+            </if>
+            <if test="registerDate != null">
+                register_date = #{registerDate},
+            </if>
+            <if test="lastLoginDate != null">
+                last_login_date = #{lastLoginDate},
+            </if>
+            <if test="loginCount != null">
+                login_count = #{loginCount},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from t_user
+        where id = #{id}
+    </delete>
+
+</mapper>
+
