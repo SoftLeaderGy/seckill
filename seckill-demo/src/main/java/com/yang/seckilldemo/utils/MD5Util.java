@@ -24,7 +24,7 @@ public class MD5Util {
      * @return
      */
     public static String inputPassToFromPass(String inputPass){
-        String str = salt.charAt(0)+ salt.charAt(2)+ inputPass+ salt.charAt(5)+ salt.charAt(4);
+        String str = "" + salt.charAt(0)+ salt.charAt(2)+ inputPass+ salt.charAt(5)+ salt.charAt(4);
         return md5(str);
     }
 
@@ -35,7 +35,7 @@ public class MD5Util {
      * @return
      */
     public static String formPassToDBpass(String formPass,String salt){
-        String str = salt.charAt(0)+salt.charAt(2)+ formPass + salt.charAt(5)+ salt.charAt(4);
+        String str = "" + salt.charAt(0)+salt.charAt(2)+ formPass + salt.charAt(5)+ salt.charAt(4);
         return md5(str);
     }
 
@@ -53,13 +53,13 @@ public class MD5Util {
 
 
     public static void main(String[] args) {
-        // ce21b747de5af71ab5c2e20ff0a60eea
+        // d3b1294a61a07da9b49b6e22b2cbd7f9
         System.out.println(inputPassToFromPass("123456"));
 
-        // 0687f9701bca74827fcefcd7e743d179
-        System.out.println(formPassToDBpass("ce21b747de5af71ab5c2e20ff0a60eea", "1a2b3c4d"));
+        // b7797cce01b4b131b433b6acf4add449
+        System.out.println(formPassToDBpass("d3b1294a61a07da9b49b6e22b2cbd7f9", "1a2b3c4d"));
 
-        // 0687f9701bca74827fcefcd7e743d179
+        // b7797cce01b4b131b433b6acf4add449
         System.out.println(inputPassToDBPass("123456", "1a2b3c4d"));
     }
 }
