@@ -22,6 +22,6 @@ mybatis-plus:
 # 日志配置
 logging:
   level:
-    com.yang.seckill.mapper: debug
+    com.yang.seckilldemo.mapper: debug
 server:
   port: 8091
