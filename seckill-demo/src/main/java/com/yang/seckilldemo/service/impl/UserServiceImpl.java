@@ -3,10 +3,16 @@ package com.yang.seckilldemo.service.impl;
 import com.yang.seckilldemo.pojo.User;
 import com.yang.seckilldemo.mapper.UserMapper;
 import com.yang.seckilldemo.service.UserService;
+import com.yang.seckilldemo.utils.MD5Util;
+import com.yang.seckilldemo.utils.ValidatorUtil;
+import com.yang.seckilldemo.vo.LoginVO;
+import com.yang.seckilldemo.vo.RespBean;
+import com.yang.seckilldemo.vo.RespBeanEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 
@@ -78,5 +84,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteById(Long id) {
         return this.userMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public RespBean doLogin(LoginVO loginVO) {
+        String mobile = loginVO.getMobile();
+        String password = loginVO.getPassword();
+        if(StringUtils.isEmpty(mobile) || StringUtils.isEmpty(password)){
+            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
+        }
+        if(!ValidatorUtil.isMobile(mobile)){
+            return RespBean.error(RespBeanEnum.MOBILE_ERROR);
+//            RespBean respBean = new RespBean();
+//            respBean.setMsg("asdasd");
+//            return new respBean;
+        }
+//        User user = userMapper.queryById(loginVO.getMobile());
+        User user = userMapper.selectById(loginVO.getMobile());
+        if (user == null) {
+            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
+        }
+        if(!MD5Util.formPassToDBpass(loginVO.getPassword(),user.getSlat()).equals(user.getPasword())){
+            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
+        }
+        return RespBean.success();
     }
 }

@@ -1,6 +1,10 @@
 package com.yang.seckilldemo.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -11,11 +15,14 @@ import java.util.Date;
  * @author makejava
  * @since 2022-03-22 20:19:10
  */
+@Data
+@TableName("t_user")
 public class User implements Serializable {
     private static final long serialVersionUID = 802688201295562039L;
     /**
      * 用户ID shoujihaoma
      */
+    @TableId(type = IdType.NONE)
     private Long id;
 
     private String nickname;

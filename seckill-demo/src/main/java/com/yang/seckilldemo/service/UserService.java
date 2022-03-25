@@ -1,6 +1,8 @@
 package com.yang.seckilldemo.service;
 
 import com.yang.seckilldemo.pojo.User;
+import com.yang.seckilldemo.vo.LoginVO;
+import com.yang.seckilldemo.vo.RespBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -53,4 +55,5 @@ public interface UserService {
      */
     boolean deleteById(Long id);
 
+    RespBean doLogin(LoginVO loginVO);
 }

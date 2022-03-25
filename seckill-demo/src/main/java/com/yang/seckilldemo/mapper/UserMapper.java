@@ -1,5 +1,6 @@
 package com.yang.seckilldemo.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yang.seckilldemo.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +15,7 @@ import java.util.List;
  * @since 2022-03-22 20:19:09
  */
 @Mapper
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<User> {
 
     /**
      * 通过ID查询单条数据
@@ -47,6 +48,7 @@ public interface UserMapper {
      * @param user 实例对象
      * @return 影响行数
      */
+    @Override
     int insert(User user);
 
     /**
