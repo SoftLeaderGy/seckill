@@ -1,6 +1,9 @@
 package com.yang.seckilldemo.vo;
 
+import com.yang.seckilldemo.annotation.IsMobile;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @Description: 登录入参
@@ -9,6 +12,10 @@ import lombok.Data;
  */
 @Data
 public class LoginVO {
+    @NotNull
+    @IsMobile
     private String mobile;
+
+    @NotNull
     private String password;
 }
