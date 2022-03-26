@@ -1,10 +1,12 @@
 package com.yang.seckilldemo.service.impl;
 
+import com.yang.seckilldemo.exception.GlobalException;
 import com.yang.seckilldemo.pojo.User;
 import com.yang.seckilldemo.mapper.UserMapper;
 import com.yang.seckilldemo.service.UserService;
+import com.yang.seckilldemo.utils.CookieUtil;
 import com.yang.seckilldemo.utils.MD5Util;
-import com.yang.seckilldemo.utils.ValidatorUtil;
+import com.yang.seckilldemo.utils.UUIDUtil;
 import com.yang.seckilldemo.vo.LoginVO;
 import com.yang.seckilldemo.vo.RespBean;
 import com.yang.seckilldemo.vo.RespBeanEnum;
@@ -12,9 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * (User)表服务实现类
@@ -87,26 +90,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RespBean doLogin(LoginVO loginVO) {
+    public RespBean doLogin(LoginVO loginVO, HttpServletRequest request, HttpServletResponse response) {
         String mobile = loginVO.getMobile();
         String password = loginVO.getPassword();
-        if(StringUtils.isEmpty(mobile) || StringUtils.isEmpty(password)){
-            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
-        }
-        if(!ValidatorUtil.isMobile(mobile)){
-            return RespBean.error(RespBeanEnum.MOBILE_ERROR);
-//            RespBean respBean = new RespBean();
-//            respBean.setMsg("asdasd");
-//            return new respBean;
-        }
+//        if(StringUtils.isEmpty(mobile) || StringUtils.isEmpty(password)){
+//            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
+//        }
+//        if(!ValidatorUtil.isMobile(mobile)){
+//            return RespBean.error(RespBeanEnum.MOBILE_ERROR);
+////            RespBean respBean = new RespBean();
+////            respBean.setMsg("asdasd");
+////            return new respBean;
+//        }
 //        User user = userMapper.queryById(loginVO.getMobile());
-        User user = userMapper.selectById(loginVO.getMobile());
+        User user = userMapper.selectById(mobile);
         if (user == null) {
-            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
+            throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
+//            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
-        if(!MD5Util.formPassToDBpass(loginVO.getPassword(),user.getSlat()).equals(user.getPasword())){
-            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
+        if(!MD5Util.formPassToDBpass(password,user.getSlat()).equals(user.getPasword())){
+            throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
+//            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
+        // 生成Cookie
+        String ticket = UUIDUtil.uuid();
+
+        CookieUtil.setCookie("userTicket",ticket,request,response);
+        request.getSession().setAttribute(ticket,user);
         return RespBean.success();
     }
 }

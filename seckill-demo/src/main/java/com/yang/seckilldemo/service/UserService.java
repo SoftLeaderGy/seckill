@@ -6,6 +6,9 @@ import com.yang.seckilldemo.vo.RespBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * (User)表服务接口
  *
@@ -55,5 +58,5 @@ public interface UserService {
      */
     boolean deleteById(Long id);
 
-    RespBean doLogin(LoginVO loginVO);
+    RespBean doLogin(LoginVO loginVO, HttpServletRequest request, HttpServletResponse response);
 }
