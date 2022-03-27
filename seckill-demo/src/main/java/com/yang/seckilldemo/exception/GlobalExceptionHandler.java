@@ -27,6 +27,7 @@ public class GlobalExceptionHandler {
             error.setMessage(e1.getBindingResult().getAllErrors().get(0).getDefaultMessage()); // 获取正常
             return error;
         }
+        e.printStackTrace();
         return RespBean.error(RespBeanEnum.ERROR);
     }
 }
