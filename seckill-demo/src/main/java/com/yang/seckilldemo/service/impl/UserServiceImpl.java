@@ -10,14 +10,18 @@ import com.yang.seckilldemo.utils.UUIDUtil;
 import com.yang.seckilldemo.vo.LoginVO;
 import com.yang.seckilldemo.vo.RespBean;
 import com.yang.seckilldemo.vo.RespBeanEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
 
 /**
  * (User)表服务实现类
@@ -30,6 +34,8 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserMapper userMapper;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
     /**
      * 通过ID查询单条数据
      *
@@ -114,9 +120,22 @@ public class UserServiceImpl implements UserService {
         }
         // 生成Cookie
         String ticket = UUIDUtil.uuid();
-
+        redisTemplate.opsForValue().set("user:"+ ticket,user,1, TimeUnit.HOURS);
         CookieUtil.setCookie("userTicket",ticket,request,response);
-        request.getSession().setAttribute(ticket,user);
+//        request.getSession().setAttribute(ticket,user);
         return RespBean.success();
+    }
+
+    @Override
+    public User queryUserByCookie(HttpServletRequest request, HttpServletResponse response, String ticket) {
+        if(StringUtils.isEmpty(ticket)){
+            return null;
+        }
+        User user = (User) redisTemplate.opsForValue().get("user:" + ticket);
+
+        if (user == null) {
+            CookieUtil.setCookie("userTicket",ticket,request,response);
+        }
+        return user;
     }
 }

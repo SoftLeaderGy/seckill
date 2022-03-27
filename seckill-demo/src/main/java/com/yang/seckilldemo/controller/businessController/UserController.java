@@ -1,4 +1,4 @@
-package com.yang.seckilldemo.controller;
+package com.yang.seckilldemo.controller.businessController;
 
 import com.yang.seckilldemo.pojo.User;
 import com.yang.seckilldemo.service.UserService;
@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * (User)表控制层
@@ -80,5 +82,10 @@ public class UserController {
         return ResponseEntity.ok(this.userService.deleteById(id));
     }
 
+
+    @RequestMapping("/queryUserByCookie")
+    public User queryUserByCookie(HttpServletRequest request, HttpServletResponse response,String ticket){
+        return userService.queryUserByCookie(request,response,ticket);
+    }
 }
 

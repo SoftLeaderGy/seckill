@@ -18,6 +18,7 @@ public enum RespBeanEnum {
 
     // 登录模块
     LOGIN_ERROR(500210,"用户名或密码错误！"),
+    LOGIN_OVERDUE(500212,"账号过期，请重新登录！"),
     MOBILE_ERROR(500211,"手机号格式不正确！"),
     // 参数校验
     BIND_ERROR(500212,"参数校验异常")

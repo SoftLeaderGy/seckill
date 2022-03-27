@@ -1,4 +1,4 @@
-package com.yang.seckilldemo.controller;
+package com.yang.seckilldemo.controller.businessController;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

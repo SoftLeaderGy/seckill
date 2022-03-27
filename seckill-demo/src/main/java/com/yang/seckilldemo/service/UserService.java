@@ -59,4 +59,6 @@ public interface UserService {
     boolean deleteById(Long id);
 
     RespBean doLogin(LoginVO loginVO, HttpServletRequest request, HttpServletResponse response);
+
+    User queryUserByCookie(HttpServletRequest request, HttpServletResponse response, String ticket);
 }
