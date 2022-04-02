@@ -1,4 +1,5 @@
 package com.yang.seckilldemo.service.impl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.yang.seckilldemo.pojo.Goods;
@@ -23,5 +24,10 @@ public class GoodsServiceImpl implements GoodsService{
     @Override
     public List<GoodsVo> findGoodsVo() {
         return goodsMapper.findGoodsVo();
+    }
+
+    @Override
+    public GoodsVo queryGoodsDetail(Long goodsId) {
+        return goodsMapper.queryGoodsDetail(goodsId);
     }
 }

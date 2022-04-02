@@ -18,4 +18,6 @@ public interface GoodsService{
      * @return
      */
     List<GoodsVo> findGoodsVo();
+
+    GoodsVo queryGoodsDetail(Long goodsId);
 }

@@ -91,6 +91,18 @@
             t_goods g
                 LEFT JOIN t_seckill_goods sg ON g.id = sg.goods_id
     </select>
+    <select id="queryGoodsDetail" resultType="com.yang.seckilldemo.vo.GoodsVo" parameterType="long">
+        SELECT
+            g.*,
+            sg.seckill_price,
+            sg.stock_count,
+            sg.start_date,
+            sg.end_date
+        FROM
+            t_goods g
+                LEFT JOIN t_seckill_goods sg ON g.id = sg.goods_id
+    where sg.goods_id = #{goodsId}
+    </select>
 
     <!--新增所有列-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">

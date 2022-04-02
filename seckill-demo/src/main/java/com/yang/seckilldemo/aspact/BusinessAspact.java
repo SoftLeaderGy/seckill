@@ -68,6 +68,6 @@ public class BusinessAspact {
             return "login";
         }
         Object proceed = joinPoint.proceed();
-        return "goodsList";
+        return proceed;
     }
 }
