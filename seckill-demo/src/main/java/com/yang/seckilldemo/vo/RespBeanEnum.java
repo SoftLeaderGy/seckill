@@ -21,7 +21,14 @@ public enum RespBeanEnum {
     LOGIN_OVERDUE(500212,"账号过期，请重新登录！"),
     MOBILE_ERROR(500211,"手机号格式不正确！"),
     // 参数校验
-    BIND_ERROR(500212,"参数校验异常")
+    BIND_ERROR(500212,"参数校验异常"),
+
+    // 商品
+    GOODS_NULL(500300,"商品详情不存在！"),
+
+    // 秒杀模块
+    EMPTY_STOCK(500500,"该商品库存不足！"),
+    REPEATE_ERROR(500501,"该商品每人限购一个！")
     ;
     private final Integer code;
     private final String message;
