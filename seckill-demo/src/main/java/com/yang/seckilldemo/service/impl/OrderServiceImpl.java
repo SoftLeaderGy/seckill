@@ -14,6 +14,7 @@ import com.yang.seckilldemo.mapper.OrderMapper;
 import com.yang.seckilldemo.utils.UUIDUtil;
 import com.yang.seckilldemo.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -33,6 +34,8 @@ implements OrderService{
     private OrderMapper orderMapper;
     @Autowired
     private SeckillOrderMapper seckillOrderMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
     @Override
     public Order seckill(GoodsVo goodsVo, User user) {
         QueryWrapper<SeckillGoods> seckillGoodsQueryWrapper = new QueryWrapper<>();
@@ -60,6 +63,8 @@ implements OrderService{
         seckillOrder.setOrderId(order.getId());
         seckillOrder.setGoodsId(goodsVo.getId());
         seckillOrderMapper.insert(seckillOrder);
+        // 生成秒杀订单数据放入redis缓存中
+        redisTemplate.opsForValue().set("order:"+ goodsVo.getId() + "user:" + user.getId(),seckillOrder);
         return order;
     }
 }

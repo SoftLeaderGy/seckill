@@ -12,6 +12,7 @@ import com.yang.seckilldemo.service.UserService;
 import com.yang.seckilldemo.utils.CookieUtil;
 import com.yang.seckilldemo.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,6 +42,8 @@ public class SeckillController {
     private SeckillOrderService seckillOrderService;
 
     @Autowired
+    private RedisTemplate redisTemplate;
+    @Autowired
     private OrderService orderService;
     @RequestMapping("/doSeckill")
     public String doSeckill(HttpServletRequest request, HttpServletResponse response, Long goodsId, Model model){
@@ -57,7 +60,10 @@ public class SeckillController {
         QueryWrapper<SeckillOrder> seckillOrderQueryWrapper = new QueryWrapper<>();
         seckillOrderQueryWrapper.eq("goods_id",goodsId)
                         .eq("user_id",user.getId());
-        SeckillOrder seckillOrder = seckillOrderService.getOne(seckillOrderQueryWrapper);
+//        SeckillOrder seckillOrder = seckillOrderService.getOne(seckillOrderQueryWrapper);
+
+        // 从redis缓存中获取秒杀订单信息,
+        SeckillOrder seckillOrder = (SeckillOrder) redisTemplate.opsForValue().get("order:" + goodsVo.getId() + "user:" + user.getId());
         if(seckillOrder != null){
             model.addAttribute("errmsg",REPEATE_ERROR.getMessage());
             return "secKillFail";
