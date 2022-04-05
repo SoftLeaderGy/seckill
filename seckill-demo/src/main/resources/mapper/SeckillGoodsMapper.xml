@@ -102,7 +102,7 @@
     </insert>
 
     <!--通过主键修改数据-->
-    <update id="update">
+    <update id="updatePro">
         update t_seckill_goods
         <set>
             <if test="goodsId != null">
