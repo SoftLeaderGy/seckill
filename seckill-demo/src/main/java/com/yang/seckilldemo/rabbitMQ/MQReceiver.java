@@ -23,4 +23,14 @@ public class MQReceiver {
     public void receiver(Object msg){
         log.info("接收消息=====>" + msg);
     }
+
+    @RabbitListener(queues = "fanout_queue01")
+    public void receiver01(Object msg){
+        log.info("fanout_queue01接收消息=====>" + msg);
+    }
+
+    @RabbitListener(queues = "fanout_queue02")
+    public void receiver02(Object msg){
+        log.info("fanout_queue02接收消息=====>" + msg);
+    }
 }

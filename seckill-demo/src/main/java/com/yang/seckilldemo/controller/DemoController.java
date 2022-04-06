@@ -31,5 +31,9 @@ public class DemoController {
         mqSender.send("hello");
     }
 
+    @RequestMapping("/testFanoutExchangeMQ")
+    public void testFanoutExchangeMQ(){
+        mqSender.sendExchange("hello");
+    }
 }
 

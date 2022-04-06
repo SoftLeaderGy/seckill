@@ -29,4 +29,11 @@ public class MQSender {
         // 参数二： 发送的消息
         rabbitTemplate.convertAndSend("queue",msg);
     }
+
+    public void sendExchange(Object msg){
+        log.info("发送消息=======>" + msg.toString());
+
+        // fanoutExchange（）
+        rabbitTemplate.convertAndSend("fanoutExchange","",msg);
+    }
 }
