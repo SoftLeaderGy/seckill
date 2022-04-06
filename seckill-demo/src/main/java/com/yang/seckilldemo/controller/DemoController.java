@@ -35,5 +35,21 @@ public class DemoController {
     public void testFanoutExchangeMQ(){
         mqSender.sendExchange("hello");
     }
+
+    /**
+     * 测试发送到路由健为 RouteRed的队列中去
+     */
+    @RequestMapping("/testDirectExchangeMQForRouteRed")
+    public void testDirectExchangeMQRouteRed(){
+        mqSender.sendDirectExchangeForRouteRed("hello - 路由健为 RouteRed");
+    }
+
+    /**
+     * 测试发送到路由健为 RouteGreen的队列中去
+     */
+    @RequestMapping("/testDirectExchangeMQForRouteGreen")
+    public void testDirectExchangeMQForRouteGreen(){
+        mqSender.sendDirectExchangeForRouteGreen("hello - 路由健为 RouteGreen");
+    }
 }
 
