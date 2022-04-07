@@ -51,5 +51,24 @@ public class DemoController {
     public void testDirectExchangeMQForRouteGreen(){
         mqSender.sendDirectExchangeForRouteGreen("hello - 路由健为 RouteGreen");
     }
+
+
+
+
+    /**
+     * 测试发送queue01的队列中去
+     */
+    @RequestMapping("/testTopicExchangeMQRoute01")
+    public void testTopicExchangeMQRoute01(){
+        mqSender.sendTopicExchangeForRoute01("hello - 路由健为 queue.mee.qwe  ===> 匹配的路由健为 ： #.queue.#");
+    }
+
+    /**
+     * 测试发送queue01、queue02的队列中去
+     */
+    @RequestMapping("/testTopicExchangeMQRoute02")
+    public void testTopicExchangeMQRoute02(){
+        mqSender.sendTopicExchangeForRoute02("hello - 路由健为 msg.queue.msg.qwe.qwe  ===> 匹配的路由健为 ： *.queue.#");
+    }
 }
 

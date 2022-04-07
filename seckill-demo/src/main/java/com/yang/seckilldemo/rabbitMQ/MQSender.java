@@ -56,4 +56,26 @@ public class MQSender {
         // DirectExchange模式的交换机只能发送与路由健相匹配的交换机发消息
         rabbitTemplate.convertAndSend("directExchange","routeGreen",msg);
     }
+
+
+
+    /**
+     * 向路由健为Route01的去队列上发消息
+     * @param msg
+     */
+    public void sendTopicExchangeForRoute01(Object msg){
+        log.info("发送消息=======>" + msg.toString());
+        // DirectExchange模式的交换机只能发送与路由健相匹配的交换机发消息
+        rabbitTemplate.convertAndSend("topicExchange","queue.mee.qwe",msg); // *.queue.#
+    }
+
+    /**
+     * 向路由健为Route02的去队列上发消息
+     * @param msg
+     */
+    public void sendTopicExchangeForRoute02(Object msg){
+        log.info("发送消息=======>" + msg.toString());
+        // DirectExchange模式的交换机只能发送与路由健相匹配的交换机发消息
+        rabbitTemplate.convertAndSend("topicExchange","msg.queue.msg.qwe.qwe",msg); // #.queue.#
+    }
 }
