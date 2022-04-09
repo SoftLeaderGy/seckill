@@ -78,4 +78,14 @@ public class MQSender {
         // DirectExchange模式的交换机只能发送与路由健相匹配的交换机发消息
         rabbitTemplate.convertAndSend("topicExchange","msg.queue.msg.qwe.qwe",msg); // #.queue.#
     }
+
+
+    /**
+     * 向秒杀交换机（skillExchange）中发送消息，且路由key为"skill.massage"
+     * @param msg
+     */
+    public void sendSkillMsg(Object msg){
+        log.info("发送消息=======>" + msg.toString());
+        rabbitTemplate.convertAndSend("skillExchange","skill.massage",msg);
+    }
 }

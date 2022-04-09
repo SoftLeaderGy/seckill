@@ -4,13 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yang.seckilldemo.exception.GlobalException;
 import com.yang.seckilldemo.pojo.Order;
 import com.yang.seckilldemo.pojo.SeckillOrder;
+import com.yang.seckilldemo.pojo.SkillMassage;
 import com.yang.seckilldemo.pojo.User;
+import com.yang.seckilldemo.rabbitMQ.MQSender;
 import com.yang.seckilldemo.service.GoodsService;
 import com.yang.seckilldemo.service.OrderService;
 import com.yang.seckilldemo.service.SeckillOrderService;
 import com.yang.seckilldemo.service.UserService;
 import com.yang.seckilldemo.utils.CookieUtil;
 import com.yang.seckilldemo.vo.GoodsVo;
+import com.yang.seckilldemo.vo.RespBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,11 +23,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.yang.seckilldemo.vo.RespBeanEnum.*;
 
@@ -49,17 +55,23 @@ public class SeckillController implements InitializingBean {
     private RedisTemplate redisTemplate;
     @Autowired
     private OrderService orderService;
+
+    private Map<Long,Boolean> emptyMap = new HashMap<>();
+    @Autowired
+    private MQSender mqSender;
     @RequestMapping("/doSeckill")
-    public String doSeckill(HttpServletRequest request, HttpServletResponse response, Long goodsId, Model model){
+    @ResponseBody
+    public RespBean doSeckill(HttpServletRequest request, HttpServletResponse response, Long goodsId, Model model){
+
         User user = userService.queryUserByCookie(request,response, CookieUtil.getCookieValue(request,"userTicket"));
         GoodsVo goodsVo = goodsService.queryGoodsDetail(goodsId);
         if(goodsVo == null){
             model.addAttribute("errmsg",GOODS_NULL.getMessage());
-            return "secKillFail";
+            return RespBean.error(GOODS_NULL);
         }
         if(goodsVo.getStockCount() < 1){
             model.addAttribute("errmsg",EMPTY_STOCK.getMessage());
-            return "secKillFail";
+            return RespBean.error(EMPTY_STOCK);
         }
         QueryWrapper<SeckillOrder> seckillOrderQueryWrapper = new QueryWrapper<>();
         seckillOrderQueryWrapper.eq("goods_id",goodsId)
@@ -70,7 +82,7 @@ public class SeckillController implements InitializingBean {
         SeckillOrder seckillOrder = (SeckillOrder) redisTemplate.opsForValue().get("order:" + goodsVo.getId() + "user:" + user.getId());
         if(seckillOrder != null){
             model.addAttribute("errmsg",REPEATE_ERROR.getMessage());
-            return "secKillFail";
+            return RespBean.error(REPEATE_ERROR);
         }
 
         /**
@@ -80,6 +92,9 @@ public class SeckillController implements InitializingBean {
          *      需要轮询的查询秒杀结果，直到查询结果，返回给客户端，秒杀是否成功。
          */
 
+        if(emptyMap.get(goodsId)){
+            return RespBean.error(EMPTY_STOCK);
+        }
         // redis中预减库存
         // 将redis中的key为"goodsId:" + goodsId 减1 ，返回的是减少之后的库存
         ValueOperations valueOperations = redisTemplate.opsForValue();
@@ -88,9 +103,17 @@ public class SeckillController implements InitializingBean {
             model.addAttribute("errmsg",EMPTY_STOCK.getMessage());
             // 如果是小于0的话，把库存的数量在加1 就会变成0，好看些！
             valueOperations.increment("goodsId:" + goodsId);
-            return "secKillFail";
+            emptyMap.put(goodsId,true);
+            return RespBean.error(EMPTY_STOCK);
         }
 
+        // 将秒杀的请求信息放入MQ队列中去
+        SkillMassage skillMassage = new SkillMassage(user, goodsVo);
+        // 将消息发送出去，做异步处理
+        mqSender.sendSkillMsg(skillMassage);
+        // 先给用户返回信"0"，如果用户接到的是0 就说明在排队，
+        // 等队列中的消息处理
+        return RespBean.success(0);
 
 
         /**
@@ -103,7 +126,6 @@ public class SeckillController implements InitializingBean {
         model.addAttribute("user",user);
         return "orderDetail";
          */
-        return null;
     }
 
 
@@ -120,6 +142,7 @@ public class SeckillController implements InitializingBean {
         // 将每一个商品的 以"goodsId"+ goodsVo.getId() 作为redis的key 对应商品的库存数量 存入redis中
         goodsVoList.forEach(goodsVo -> {
             redisTemplate.opsForValue().set("goodsId"+ goodsVo.getId(),goodsVo.getStockCount());
+            emptyMap.put(goodsVo.getId(),false);
         });
     }
 }

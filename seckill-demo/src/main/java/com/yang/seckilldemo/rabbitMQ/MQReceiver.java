@@ -1,7 +1,12 @@
 package com.yang.seckilldemo.rabbitMQ;
 
+import com.yang.seckilldemo.pojo.SkillMassage;
+import com.yang.seckilldemo.pojo.User;
+import com.yang.seckilldemo.service.OrderService;
+import com.yang.seckilldemo.vo.GoodsVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,6 +17,9 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class MQReceiver {
+
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 接收消息方法receiver(Object msg)
@@ -52,5 +60,13 @@ public class MQReceiver {
     @RabbitListener(queues = "queueTopic02")
     public void topicReceiver02(Object msg){
         log.info("topicReceiver02接收消息=====>" + msg);
+    }
+
+    public void skillReceuver(Object msg){
+        log.info("skillReceuver接收消息=====>" + msg);
+        SkillMassage skillMassage = (SkillMassage) msg;
+        User user = skillMassage.getUser();
+        GoodsVo goodsVo = skillMassage.getGoodsVo();
+        orderService.seckill(goodsVo,user);
     }
 }

@@ -13,8 +13,9 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQTopicConfig {
 
     /**
-     *
+     * 测试Topic交换机模式
      */
+    /*
     private static final String QUEUE01 = "queueTopic01";
     private static final String QUEUE02 = "queueTopic02";
     private static final String TopicExchange = "topicExchange";
@@ -46,6 +47,30 @@ public class RabbitMQTopicConfig {
     @Bean
     public Binding binding02(){
         return BindingBuilder.bind(queue02()).to(topicExchange()).with(ROUTEKEY02);
+    }
+    */
+
+    /**
+     * 秒杀使用的依然是Topic交换机模式
+     * 重新配置
+     */
+
+    private static final String SKILLQUEUE = "skillQueue";
+    private static final String SKILLEXCHANGE = "skillExchange";
+
+    @Bean
+    public Queue queue(){
+        return new Queue(SKILLQUEUE);
+    }
+
+    @Bean
+    public TopicExchange topicExchange(){
+        return new TopicExchange(SKILLEXCHANGE);
+    }
+
+    @Bean
+    public Binding binding(){
+        return BindingBuilder.bind(queue()).to(topicExchange()).with("skill.#");
     }
 
 }
